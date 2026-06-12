@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODM Database & Gunsmith Loadouts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">CODM<span>PRO</span></div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#weapons">Weapons</a></li>
+                <li><a href="#loadouts">Gunsmith Loadouts</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <h1>Complete <span>CODM</span> Database</h1>
+        <p>Heto ang kumpletong listahan ng mga Armory at Pro Loadouts para sa mga seryosong manlalaro.</p>
+        <a href="#weapons" class="btn">View Weapons</a>
+    </section>
+
+    <section class="container" id="weapons">
+        <h2 class="section-title">Weapon <span>Arsenal</span></h2>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterData('all')">All Classes</button>
+            <button class="filter-btn" onclick="filterData('Assault Rifle')">Assault Rifles</button>
+            <button class="filter-btn" onclick="filterData('SMG')">SMGs</button>
+            <button class="filter-btn" onclick="filterData('Sniper')">Snipers</button>
+        </div>
+
+        <div class="grid" id="weaponGrid"></div>
+    </section>
+
+    <section class="container" id="loadouts" style="background-color: #0b0d12;">
+        <h2 class="section-title">Pro <span>Gunsmith Loadouts</span></h2>
+        <div class="grid" id="loadoutGrid"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 CODM Pro Database Hub. Para sa mga Pinoy Gamers.</p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script>
+        // FUNCTION: Mag-render ng mga Weapon Cards base sa filter
+        function renderWeapons(filteredList) {
+            const grid = document.getElementById('weaponGrid');
+            grid.innerHTML = ''; 
+
+            filteredList.forEach(weapon => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <div class="class-label">${weapon.class}</div>
+                        <h3 class="name-label">${weapon.name}</h3>
+                        <div class="stat-row">
+                            <span>Damage: ${weapon.dmg}</span>
+                            <div class="stat-bar"><div class="stat-fill" style="width: ${weapon.dmg > 100 ? 100 : weapon.dmg}%;"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Fire Rate: ${weapon.fireRate}</span>
+                            <div class="stat-bar"><div class="stat-fill" style="width: ${weapon.fireRate > 100 ? 100 : weapon.fireRate}%;"></div></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Accuracy: ${weapon.accuracy}</span>
+                            <div class="stat-bar"><div class="stat-fill" style="width: ${weapon.accuracy}%;"></div></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // FUNCTION: Mag-render ng Loadouts base sa filter
+        function renderLoadouts(filteredList) {
+            const grid = document.getElementById('loadoutGrid');
+            grid.innerHTML = '';
+
+            filteredList.forEach(loadout => {
+                let listItems = '';
+                loadout.attachments.forEach(att => {
+                    listItems += `<li>${att}</li>`;
+                });
+
+                grid.innerHTML += `
+                    <div class="card">
+                        <div class="class-label">${loadout.type} (${loadout.style})</div>
+                        <h3 class="name-label">${loadout.gun}</h3>
+                        <ul class="attachment-list">${listItems}</ul>
+                        <div class="perks-badge">PERKS: ${loadout.perks}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // CONTROL FUNCTION: Triggered kapag may pinindot na class filter button
+        function filterData(className) {
+            // Baguhin ang kulay ng active button
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if(className === 'all') {
+                renderWeapons(weaponsData);
+                renderLoadouts(loadoutsData);
+            } else {
+                const filteredWeapons = weaponsData.filter(w => w.class === className);
+                const filteredLoadouts = loadoutsData.filter(l => l.type === className);
+                renderWeapons(filteredWeapons);
+                renderLoadouts(filteredLoadouts);
+            }
+        }
+
+        // Auto-run kapag kabukas ng website
+        window.onload = () => {
+            renderWeapons(weaponsData);
+            renderLoadouts(loadoutsData);
+        };
+    </script>
+</body>
+</html>
+
